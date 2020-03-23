@@ -1,0 +1,135 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "publisher_id": {
+      "type": ["null", "integer"]
+    },
+    "date": {
+      "type": ["null", "string"],
+      "format": "date"
+    },
+    "datetime": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "impressions": {
+      "type": ["null", "integer"]
+    },
+    "clicks": {
+      "type": ["null", "integer"]
+    },
+    "sales": {
+      "type": ["null", "integer"]
+    },
+    "leads": {
+      "type": ["null", "integer"]
+    },
+    "sale_lead_amount": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "earnings_per_click": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "bonus_amount": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "total_commission": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "publisher_bonus": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "publisher_commission": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "site_bonus": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "site_commission": {
+      "anyOf": [
+        {
+            "type": "null"
+        },
+        {
+            "type": "number",
+            "multipleOf": 1e-8
+        }
+      ]
+    },
+    "publisher": {
+      "type": ["null", "string"]
+    },
+    "publisher_type": {
+      "type": ["null", "string"]
+    },
+    "company": {
+      "type": ["null", "string"]
+    },
+    "state": {
+      "type": ["null", "string"]
+    },
+    "website": {
+      "type": ["null", "string"]
+    },
+    "group_id": {
+      "type": ["null", "integer"]
+    }
+  }
+}
