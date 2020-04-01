@@ -137,6 +137,8 @@ def sync_endpoint(
 
     last_datetime = get_bookmark(state, stream_name, start_date)
     max_bookmark_value = last_datetime
+    LOGGER.info('stream: {}, bookmark_field: {}, last_datetime: {}'.format(
+         stream_name, bookmark_field, last_datetime))
 
     # windowing: loop through date date_window_days date windows from last_datetime to now_datetime
     now_datetime = utils.now()

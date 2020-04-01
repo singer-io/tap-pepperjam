@@ -6,6 +6,8 @@ import singer
 
 LOGGER = singer.get_logger()
 
+API_VERSION = '20120402'
+
 
 class Server5xxError(Exception):
     pass
@@ -96,15 +98,13 @@ def raise_for_error(response):
 class PepperjamClient(object):
     def __init__(self,
                  api_key,
-                 api_version,
                  user_agent=None):
         self.__api_key = api_key
-        self.__api_version = api_version
         self.__user_agent = user_agent
         self.__session = requests.Session()
         self.__verified = False
         self.base_url = 'https://api.pepperjamnetwork.com/{}/advertiser'.format(
-            api_version)
+            API_VERSION)
 
     def __enter__(self):
         self.__verified = self.check_api_key()

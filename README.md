@@ -203,12 +203,11 @@ This tap:
     - [singer-tools](https://github.com/singer-io/singer-tools)
     - [target-stitch](https://github.com/singer-io/target-stitch)
 
-3. Create your tap's `config.json` file. The `server_subdomain` is everything before `.pepperjam.com.` in the pepperjam URL.  The `account_name` is everything between `.pepperjam.com.` and `api` in the pepperjam URL. The `date_window_size` is the integer number of days (between the from and to dates) for date-windowing through the date-filtered endpoints (default = 60).
+3. Create your tap's `config.json` file. The `api_key` is available in the Pepperjam Console UI (see **Authentication** above). The `date_window_days` is the integer number of days (between the from and to dates) for date-windowing through the date-filtered endpoints (default = 30). The `lock_period_days` is the latency look-back period for reports/performance endpoints. The `start_date` is the absolute beginning date from which incremental loading on the initial load will start.
 
     ```json
     {
         "api_key": "YOUR_API_KEY",
-        "api_version": "PEPPERJAM_API_VERSION",
         "date_window_days": "30",
         "lock_period_days": "60",
         "start_date": "2019-01-01T00:00:00Z",

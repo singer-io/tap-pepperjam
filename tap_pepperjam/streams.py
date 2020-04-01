@@ -19,7 +19,7 @@ STREAMS = {
         'path': 'creative/advanced',
         'key_properties': ['id'],
         'replication_method': 'INCREMENTAL',
-        'repllication_keys': ['modified'],
+        'replication_keys': ['modified'],
         'data_key': 'data',
         'params': {}
     },
@@ -29,7 +29,7 @@ STREAMS = {
         'path': 'creative/banner',
         'key_properties': ['id'],
         'replication_method': 'INCREMENTAL',
-        'repllication_keys': ['modified'],
+        'replication_keys': ['modified'],
         'data_key': 'data',
         'params': {}
     },
@@ -39,7 +39,7 @@ STREAMS = {
         'path': 'creative/coupon',
         'key_properties': ['id'],
         'replication_method': 'INCREMENTAL',
-        'repllication_keys': ['modified'],
+        'replication_keys': ['modified'],
         'data_key': 'data',
         'params': {}
     },
@@ -49,7 +49,7 @@ STREAMS = {
         'path': 'creative/generic',
         'key_properties': ['type'],
         'replication_method': 'INCREMENTAL',
-        'repllication_keys': ['modified'],
+        'replication_keys': ['modified'],
         'data_key': 'data',
         'params': {}
     },
@@ -77,7 +77,7 @@ STREAMS = {
         'path': 'creative/text',
         'key_properties': ['id'],
         'replication_method': 'INCREMENTAL',
-        'repllication_keys': ['modified'],
+        'replication_keys': ['modified'],
         'data_key': 'data',
         'params': {}
     },
