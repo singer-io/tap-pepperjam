@@ -13,7 +13,6 @@ LOGGER = singer.get_logger()
 
 REQUIRED_CONFIG_KEYS = [
     'api_key',
-    'api_version',
     'start_date',
     'user_agent'
 ]
@@ -32,7 +31,6 @@ def main():
     parsed_args = singer.utils.parse_args(REQUIRED_CONFIG_KEYS)
 
     with PepperjamClient(parsed_args.config['api_key'],
-                         parsed_args.config['api_version'],
                          parsed_args.config['user_agent']) as client:
 
         state = {}

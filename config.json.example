@@ -1,6 +1,5 @@
 {
     "api_key": "YOUR_API_KEY",
-    "api_version": "PEPPERJAM_API_VERSION",
     "date_window_days": "30",
     "lock_period_days": "60",
     "start_date": "2019-01-01T00:00:00Z",
