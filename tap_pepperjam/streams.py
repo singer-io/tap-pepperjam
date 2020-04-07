@@ -115,7 +115,7 @@ STREAMS = {
             # Reference: https://support.pepperjam.com/s/advertiser-api-documentation#Product
             'itemized_list_product': {
                 'path': 'itemized-list/product',
-                'key_properties': ['id'],
+                'key_properties': ['id', 'list_id'],
                 'replication_method': 'FULL_TABLE',
                 'data_key': 'data',
                 'params': {
@@ -148,14 +148,14 @@ STREAMS = {
     # Reference: https://support.pepperjam.com/s/advertiser-api-documentation#CreativeDetails
     'creative_performance': {
         'path': 'report/creative-details',
-        'key_properties': ['creative_id', 'creative_type', 'publisher_id', 'date'],
+        'key_properties': ['creative_id', 'creative_type', 'date'],
         'replication_method': 'INCREMENTAL',
         'replication_keys': ['datetime'],
         'bookmark_query_field_from': 'startDate',
         'bookmark_query_field_to': 'endDate',
         'lock_period_ind': True,
         'params': {
-            'groupBy': 'publisher_date'
+            'groupBy': 'date'
         }
     },
     # Reference: https://support.pepperjam.com/s/advertiser-api-documentation#CreativePerformanceByPublisher
@@ -200,14 +200,16 @@ STREAMS = {
 
     # Reference: https://support.pepperjam.com/s/advertiser-api-documentation#TransactionHistory
     'transaction_history': {
-        'path': 'report/transaction-details',
-        'key_properties': ['transaction_id'],
+        'path': 'report/transaction-history',
+        'key_properties': ['transaction_id', 'sale_date', 'process_date'],
         'replication_method': 'INCREMENTAL',
         'replication_keys': ['sale_date'],
         'bookmark_query_field_from': 'startDate',
         'bookmark_query_field_to': 'endDate',
         'lock_period_ind': False,
-        'params': {}
+        'params': {
+            'separateCommission': 1
+        }
     }
 }
 

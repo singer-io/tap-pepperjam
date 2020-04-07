@@ -11,12 +11,6 @@
     "creative_name": {
       "type": ["null", "string"]
     },
-    "publisher_id": {
-      "type": ["null", "integer"]
-    },
-    "publisher": {
-      "type": ["null", "string"]
-    },
     "group_id": {
       "type": ["null", "integer"]
     },

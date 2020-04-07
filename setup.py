@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='tap-pepperjam',
-      version='0.0.2',
+      version='0.0.3',
       description='Singer.io tap for extracting data from the Pepperjam Advertiser API',
       author='jeff.huth@bytecode.io',
       classifiers=['Programming Language :: Python :: 3 :: Only'],
