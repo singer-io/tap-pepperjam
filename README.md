@@ -131,8 +131,8 @@ This tap:
 
 [creative_performance](https://support.pepperjam.com/s/advertiser-api-documentation#CreativeDetails)
 - Endpoint: report/creative-details-publisher
-- Primary key fields: creative_id, creative_type, publisher_id, date
-- Group by: publisher_date
+- Primary key fields: creative_id, creative_type, date
+- Group by: date
 - Replication strategy: INCREMENTAL (query filtered)
    - Bookmark query fields: startDate, endDate
    - Bookmark: datetime (date-time)
@@ -166,7 +166,7 @@ This tap:
 
 [transaction_history](https://support.pepperjam.com/s/advertiser-api-documentation#TransactionHistory)
 - Endpoint: report/transaction-history
-- Primary key fields: transaction_id
+- Primary key fields: transaction_id, sale_date, process_date
 - Replication strategy: INCREMENTAL (query filtered)
    - Bookmark query fields: startDate, endDate
    - Bookmark: sale_date (date-time)
