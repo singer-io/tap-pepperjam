@@ -111,6 +111,7 @@ def process_records(catalog, #pylint: disable=too-many-branches
 # Sync a specific parent or child endpoint.
 def sync_endpoint(
         client,
+        config,
         catalog,
         state,
         start_date,
@@ -130,6 +131,7 @@ def sync_endpoint(
     data_key = endpoint_config.get('data_key', 'data')
     id_fields = endpoint_config.get('key_properties')
     lock_period_ind = endpoint_config.get('lock_period_ind', False)
+    api_key = config.get('api_key')
 
     # Get the latest bookmark for the stream and set the last_integer/datetime
     last_datetime = None
@@ -154,7 +156,10 @@ def sync_endpoint(
 
         # date_window_days: Number of days in each date window
         # date_window_days from config, default = 30; passed to function from sync
-        if not date_window_days:
+        if stream_name == 'transaction_history':
+            if date_window_days >= 28:
+                date_window_days = 28
+        elif not date_window_days:
             date_window_days = 30
 
         # Set start window
@@ -209,7 +214,7 @@ def sync_endpoint(
                 params = None
             LOGGER.info('URL for Stream {}: {}{}'.format(
                 stream_name,
-                next_url,
+                next_url.replace(api_key, '${api_key}'),
                 '?{}'.format(querystring) if params else ''))
 
             # API request data
@@ -314,6 +319,7 @@ def sync_endpoint(
                                 'replication_keys', [])), None)
                             child_total_records = sync_endpoint(
                                 client=client,
+                                config=config,
                                 catalog=catalog,
                                 state=state,
                                 start_date=start_date,
@@ -414,6 +420,7 @@ def sync(client, config, catalog, state):
             bookmark_field = next(iter(endpoint_config.get('replication_keys', [])), None)
             total_records = sync_endpoint(
                 client=client,
+                config=config,
                 catalog=catalog,
                 state=state,
                 start_date=start_date,

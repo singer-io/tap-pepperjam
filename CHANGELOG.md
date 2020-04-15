@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.4
+  * Fix issue where `api_key` is appearing in logs. Fix issue where `transaction_history` date window cannot exceed 28 days.
+
 ## 0.0.3
   * Fix primary key properties for reports. Fix transaction_history and creative_performance missing fields and JSON schema issues.
 
