@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.0.5
+  * Fix beta testing issues with `endDate` query parameter requesting a future date (Eastern time zone). Changed query `startDate` and `endDate` to use Eastern time zone for date windows and not UTC time.
+
 ## 0.0.4
   * Fix issue where `api_key` is appearing in logs. Fix issue where `transaction_history` date window cannot exceed 28 days.
 
