@@ -1,4 +1,5 @@
 from datetime import timedelta
+import pytz
 import math
 import singer
 from singer import metrics, metadata, Transformer, utils
@@ -137,6 +138,7 @@ def sync_endpoint(
     last_datetime = None
     max_bookmark_value = None
 
+    timezone = pytz.timezone('US/Eastern')
     last_datetime = get_bookmark(state, stream_name, start_date)
     max_bookmark_value = last_datetime
     LOGGER.info('stream: {}, bookmark_field: {}, last_datetime: {}'.format(
@@ -190,8 +192,12 @@ def sync_endpoint(
         params = static_params # adds in endpoint specific, sort, filter params
 
         if bookmark_query_field_from and bookmark_query_field_to:
-            params[bookmark_query_field_from] = strftime(start_window)[:10] # truncate date
-            params[bookmark_query_field_to] = strftime(end_window)[:10] # truncate date
+            # Query parameter startDate and endDate must be in Eastern time zone
+            # API will error if future dates are requested
+            window_start_dt_str = start_window.astimezone(timezone).strftime('%Y-%m-%d')
+            window_end_dt_str = end_window.astimezone(timezone).strftime('%Y-%m-%d')
+            params[bookmark_query_field_from] = window_start_dt_str
+            params[bookmark_query_field_to] = window_end_dt_str
 
         # pagination: loop thru all pages of data using next (if not None)
         page = 1
