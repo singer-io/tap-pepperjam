@@ -275,12 +275,20 @@ def sync_endpoint(
                 break # No data results
 
             # Verify key id_fields are present
+            i = 0
             for record in transformed_data:
                 for key in id_fields:
+                    # Fix issue with isolated cases where item_id in NULL, empty string, etc.
+                    if stream_name == 'transaction_history' and key == 'item_id':
+                        if not record.get(key):
+                            transformed_data[i]['item_id'] = 'not_applicable'
+                        if record.get(key) is None or record.get(key) == 'NULL' or record.get(key) == '':
+                            transformed_data[i]['item_id'] = 'not_applicable'
                     if not record.get(key):
                         LOGGER.info('Stream: {}, Missing key {} in record: {}'.format(
                             stream_name, key, record))
                         raise RuntimeError
+                i = i + 1
 
             # Process records and get the max_bookmark_value and record_count for the set of records
             max_bookmark_value, record_count = process_records(
