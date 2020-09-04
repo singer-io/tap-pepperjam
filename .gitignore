@@ -1,4 +1,5 @@
 /.vscode/*
+.vscode
 /.ipynb_checkpoints/*
 config/
 virtualenvs/

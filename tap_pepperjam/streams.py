@@ -201,7 +201,7 @@ STREAMS = {
     # Reference: https://support.pepperjam.com/s/advertiser-api-documentation#TransactionHistory
     'transaction_history': {
         'path': 'report/transaction-history',
-        'key_properties': ['transaction_id', 'sale_date', 'process_date'],
+        'key_properties': ['transaction_id', 'item_id', 'revision'],
         'replication_method': 'INCREMENTAL',
         'replication_keys': ['sale_date'],
         'bookmark_query_field_from': 'startDate',

@@ -26,6 +26,9 @@
     "website": {
       "type": ["null", "string"]
     },
+    "primary_promo_method": {
+      "type": ["null", "string"]
+    },
     "status": {
       "type": ["null", "string"]
     },

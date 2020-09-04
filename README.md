@@ -166,7 +166,7 @@ This tap:
 
 [transaction_history](https://support.pepperjam.com/s/advertiser-api-documentation#TransactionHistory)
 - Endpoint: report/transaction-history
-- Primary key fields: transaction_id, sale_date, process_date
+- Primary key fields: transaction_id, item_id, revision
 - Replication strategy: INCREMENTAL (query filtered)
    - Bookmark query fields: startDate, endDate
    - Bookmark: sale_date (date-time)
