@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+  * Dependabot update [#7](https://github.com/singer-io/tap-pepperjam/pull/7)
+
 ## 1.0.0
   * Add new field `primary_promo_method` to `publishers.json` schema. Change `key_properties` for `transaction_history` in `streams.py`. Fix blank/NULL handling for `transaction_history.item_id`.
   * **NOTE**: Clients will need to drop `transaction_history` in the target database and re-sync history. Otherwise, Stitch loads will get error: `Primary Keys for table do not match Primary Keys of incoming data`.
