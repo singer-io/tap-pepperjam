@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+  * Library updates: `backoff`, `requests` and `singer-python` [#9](https://github.com/singer-io/tap-pepperjam/pull/9)
+
 ## 1.0.1
   * Dependabot update [#7](https://github.com/singer-io/tap-pepperjam/pull/7)
 
