@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2
+  * Bump dependency versions for twistlock compliance [#10](https://github.com/singer-io/tap-pepperjam/pull/10)
+
 ## 1.0.1
   * Dependabot update [#7](https://github.com/singer-io/tap-pepperjam/pull/7)
 
