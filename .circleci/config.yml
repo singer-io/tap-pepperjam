@@ -12,7 +12,6 @@ jobs:
             source /usr/local/share/virtualenvs/tap-pepperjam/bin/activate
             uv pip install -U pip setuptools
             uv pip install .[dev]
-      - add_ssh_keys
       - run:
           name: 'JSON Validator'
           command: |
