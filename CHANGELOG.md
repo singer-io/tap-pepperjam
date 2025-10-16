@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+  * Added Parent stream for the child streams [#12](https://github.com/singer-io/tap-pepperjam/pull/12)
+
 ## 1.0.2
   * Bump dependency versions for twistlock compliance [#10](https://github.com/singer-io/tap-pepperjam/pull/10)
 
