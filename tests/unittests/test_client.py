@@ -213,33 +213,35 @@ class TestRequest(unittest.TestCase):
         mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         return mock_timer
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_returns_json_for_200_response(self, mock_timer):
+    def setUp(self):
+        # Start a single patch for the timer, configured via the helper, so
+        # individual tests don't need to repeat the __enter__/__exit__ boilerplate.
+        configured = self._patched_timer()
+        patcher = patch(
+            "tap_pepperjam.client.metrics.http_request_timer",
+            new=configured,
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_returns_json_for_200_response(self):
         """request() returns parsed JSON for a 200 response."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={"data": []})
         client._PepperjamClient__session.request.return_value = mock_resp
         result = client.request("GET", path="group")
         self.assertEqual(result, {"data": []})
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_5xx_raises_server5xx_error(self, mock_timer):
+    def test_5xx_raises_server5xx_error(self):
         """request() raises Server5xxError for status >= 500."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(503)
         client._PepperjamClient__session.request.return_value = mock_resp
         with self.assertRaises(Server5xxError):
             client.request("GET", path="group")
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_dict_params_get_api_key_injected(self, mock_timer):
+    def test_dict_params_get_api_key_injected(self):
         """request() injects apiKey and format into dict params."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={})
         client._PepperjamClient__session.request.return_value = mock_resp
@@ -248,11 +250,8 @@ class TestRequest(unittest.TestCase):
         self.assertEqual(call_kwargs["params"]["apiKey"], "test_key")
         self.assertEqual(call_kwargs["params"]["format"], "json")
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_string_params_get_api_key_injected(self, mock_timer):
+    def test_string_params_get_api_key_injected(self):
         """request() injects apiKey and format into string params."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={})
         client._PepperjamClient__session.request.return_value = mock_resp
@@ -261,11 +260,8 @@ class TestRequest(unittest.TestCase):
         self.assertIn("apiKey=test_key", call_kwargs["params"])
         self.assertIn("format=json", call_kwargs["params"])
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_user_agent_header_set(self, mock_timer):
+    def test_user_agent_header_set(self):
         """request() adds User-Agent header when user_agent is configured."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={})
         client._PepperjamClient__session.request.return_value = mock_resp
@@ -273,11 +269,8 @@ class TestRequest(unittest.TestCase):
         call_kwargs = client._PepperjamClient__session.request.call_args[1]
         self.assertEqual(call_kwargs["headers"]["User-Agent"], "test_agent")
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_post_adds_content_type(self, mock_timer):
+    def test_post_adds_content_type(self):
         """request() adds Content-Type: application/json header for POST."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={})
         client._PepperjamClient__session.request.return_value = mock_resp
@@ -285,11 +278,8 @@ class TestRequest(unittest.TestCase):
         call_kwargs = client._PepperjamClient__session.request.call_args[1]
         self.assertEqual(call_kwargs["headers"]["Content-Type"], "application/json")
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_accept_header_always_set(self, mock_timer):
+    def test_accept_header_always_set(self):
         """request() always sets Accept: application/json."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={})
         client._PepperjamClient__session.request.return_value = mock_resp
@@ -297,11 +287,8 @@ class TestRequest(unittest.TestCase):
         call_kwargs = client._PepperjamClient__session.request.call_args[1]
         self.assertEqual(call_kwargs["headers"]["Accept"], "application/json")
 
-    @patch("tap_pepperjam.client.metrics.http_request_timer")
-    def test_url_built_from_path(self, mock_timer):
+    def test_url_built_from_path(self):
         """request() builds the full URL from base_url and path when url is absent."""
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
         client = _make_client()
         mock_resp = _make_response(200, json_body={})
         client._PepperjamClient__session.request.return_value = mock_resp
