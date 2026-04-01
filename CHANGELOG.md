@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.1.0
-  * Upgrade python and dependencies version.
+  * Upgrade Python and dependency versions.
   * Added unit tests.
   * Added mock integration tests.
 
