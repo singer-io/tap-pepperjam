@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+  * Upgrade python and dependencies version.
+  * Added unit tests.
+  * Added mock integration tests.
+
 ## 1.0.2
   * Bump dependency versions for twistlock compliance [#10](https://github.com/singer-io/tap-pepperjam/pull/10)
 
