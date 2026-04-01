@@ -6,12 +6,12 @@ Tests:
 - sync_endpoint writes bookmark to state after completing a date window
 """
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 try:
-    from base import PepperjamBaseTest, make_api_response, make_mock_client
+    from base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
 except ImportError:
-    from tests.base import PepperjamBaseTest, make_api_response, make_mock_client
+    from tests.base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
 
 from tap_pepperjam.sync import (
     get_bookmark,
@@ -20,21 +20,6 @@ from tap_pepperjam.sync import (
     sync_endpoint,
 )
 from tap_pepperjam.discover import discover
-from singer import metadata as singer_metadata
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _select_stream(catalog, stream_name):
-    """Return the catalog with *stream_name* marked as selected (in-place)."""
-    for entry in catalog.streams:
-        if entry.stream == stream_name:
-            mdata = singer_metadata.to_map(entry.metadata)
-            singer_metadata.write(mdata, (), "selected", True)
-            entry.metadata = singer_metadata.to_list(mdata)
-    return catalog
 
 
 # ---------------------------------------------------------------------------

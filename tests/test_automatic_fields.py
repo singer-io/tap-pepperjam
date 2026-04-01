@@ -7,27 +7,14 @@ import unittest
 from unittest.mock import patch
 
 try:
-    from base import PepperjamBaseTest
+    from base import PepperjamBaseTest, _select_stream
 except ImportError:
-    from tests.base import PepperjamBaseTest
+    from tests.base import PepperjamBaseTest, _select_stream
 
 from tap_pepperjam.discover import discover
 from tap_pepperjam.sync import process_records
 from singer import metadata as singer_metadata
 from singer import utils
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _select_stream(catalog, stream_name):
-    for entry in catalog.streams:
-        if entry.stream == stream_name:
-            mdata = singer_metadata.to_map(entry.metadata)
-            singer_metadata.write(mdata, (), "selected", True)
-            entry.metadata = singer_metadata.to_list(mdata)
-    return catalog
 
 
 # ---------------------------------------------------------------------------

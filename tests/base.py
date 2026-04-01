@@ -6,6 +6,8 @@ HTTP calls are mocked by passing a MagicMock client to the tap's sync functions.
 import json
 import os
 
+from singer import metadata as singer_metadata
+
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -60,6 +62,20 @@ def make_mock_client(responses):
     client.base_url = "https://api.pepperjamnetwork.com/20120402/advertiser"
     client.get.side_effect = list(responses)
     return client
+
+
+def _select_stream(catalog, stream_name):
+    """Mark *stream_name* as selected in *catalog* and return the catalog.
+
+    Shared by all integration test modules so that selection logic stays
+    consistent and is maintained in one place.
+    """
+    for entry in catalog.streams:
+        if entry.stream == stream_name:
+            mdata = singer_metadata.to_map(entry.metadata)
+            singer_metadata.write(mdata, (), "selected", True)
+            entry.metadata = singer_metadata.to_list(mdata)
+    return catalog
 
 
 # ---------------------------------------------------------------------------

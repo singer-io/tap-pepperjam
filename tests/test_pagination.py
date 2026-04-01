@@ -3,30 +3,17 @@
 Verifies that sync_endpoint loops through all pages when the API response
 contains a 'next' pagination link, and stops correctly when no next page exists.
 """
+import copy
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 try:
-    from base import PepperjamBaseTest, make_api_response, make_mock_client
+    from base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
 except ImportError:
-    from tests.base import PepperjamBaseTest, make_api_response, make_mock_client
+    from tests.base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
 
-from tap_pepperjam.sync import sync_endpoint, process_records
+from tap_pepperjam.sync import sync_endpoint
 from tap_pepperjam.discover import discover
-from singer import metadata as singer_metadata
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _select_stream(catalog, stream_name):
-    for entry in catalog.streams:
-        if entry.stream == stream_name:
-            mdata = singer_metadata.to_map(entry.metadata)
-            singer_metadata.write(mdata, (), "selected", True)
-            entry.metadata = singer_metadata.to_list(mdata)
-    return catalog
 
 
 # ---------------------------------------------------------------------------
@@ -48,6 +35,12 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
     PAGE2_URL = "https://api.pepperjamnetwork.com/20120402/advertiser/publisher/?page=2"
     PAGE3_URL = "https://api.pepperjamnetwork.com/20120402/advertiser/publisher/?page=3"
 
+    def setUp(self):
+        super().setUp()
+        # Deep-copy so that sync_endpoint mutations (e.g. adding 'page' to
+        # params) never bleed across tests.
+        self.endpoint_config = copy.deepcopy(self.ENDPOINT_CONFIG)
+
     @patch("tap_pepperjam.sync.process_records", return_value=(None, 10))
     def test_two_pages_fetched_when_next_link_present(self, mock_pr):
         """sync_endpoint calls client.get twice when the first page returns a next link."""
@@ -66,8 +59,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
@@ -96,8 +89,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
@@ -118,8 +111,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
@@ -139,8 +132,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
@@ -166,8 +159,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
@@ -189,8 +182,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
@@ -217,8 +210,8 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             state={},
             start_date="2020-01-01T00:00:00Z",
             stream_name=self.STREAM_NAME,
-            path=self.ENDPOINT_CONFIG["path"],
-            endpoint_config=self.ENDPOINT_CONFIG,
+            path=self.endpoint_config["path"],
+            endpoint_config=self.endpoint_config,
             bookmark_field=None,
             selected_streams=[self.STREAM_NAME],
         )
