@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock, call
+from unittest.mock import patch, MagicMock
 
 from singer.utils import now as singer_now
 from tap_pepperjam.sync import (
