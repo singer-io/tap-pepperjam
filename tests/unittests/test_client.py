@@ -206,13 +206,6 @@ class TestCheckApiKey(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 class TestRequest(unittest.TestCase):
-    def _patched_timer(self):
-        """Return a context-manager compatible mock for metrics.http_request_timer."""
-        mock_timer = MagicMock()
-        mock_timer.return_value.__enter__ = MagicMock(return_value=MagicMock())
-        mock_timer.return_value.__exit__ = MagicMock(return_value=False)
-        return mock_timer
-
     @patch("tap_pepperjam.client.metrics.http_request_timer")
     def test_returns_json_for_200_response(self, mock_timer):
         """request() returns parsed JSON for a 200 response."""

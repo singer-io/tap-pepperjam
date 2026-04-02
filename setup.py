@@ -13,6 +13,11 @@ setup(name='tap-pepperjam',
           'requests==2.33.1',
           'singer-python==6.8.0'
       ],
+      extras_require={
+          'dev': [
+              'pytest',
+          ]
+      },
       entry_points='''
           [console_scripts]
           tap-pepperjam=tap_pepperjam:main
