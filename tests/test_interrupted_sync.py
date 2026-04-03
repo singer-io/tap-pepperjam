@@ -48,12 +48,11 @@ class TestUpdateCurrentlySyncing(PepperjamBaseTest, unittest.TestCase):
 
     @patch("tap_pepperjam.sync.singer.write_state")
     def test_currently_syncing_noop_when_not_present_and_none(self, _mock_ws):
-        """When called with None on a state without 'currently_syncing', the else branch
-        runs singer.set_currently_syncing(state, None) setting the key to None."""
+        """When called with None on a state without 'currently_syncing', state remains unchanged."""
         state = {}
         update_currently_syncing(state, None)
-        # The tap's else-branch calls singer.set_currently_syncing which sets key to None
-        self.assertIsNone(state.get("currently_syncing"))
+        # When the key is not already present, clearing it should leave state without the key.
+        self.assertNotIn("currently_syncing", state)
 
     @patch("tap_pepperjam.sync.singer.write_state")
     def test_currently_syncing_updated_between_streams(self, _mock_ws):
