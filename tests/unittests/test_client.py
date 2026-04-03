@@ -298,7 +298,7 @@ class TestRequest(unittest.TestCase):
         # Accept either positional or keyword form
         if not used_url:
             used_url = call_args[0][1] if len(call_args[0]) > 1 else ""
-        expected_url = "{}/v{}/group".format(client.base_url, API_VERSION)
+        expected_url = "{}/group/".format(client.base_url)
         self.assertEqual(used_url, expected_url)
 
 
