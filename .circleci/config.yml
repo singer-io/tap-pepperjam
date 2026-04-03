@@ -23,13 +23,12 @@ jobs:
             source /usr/local/share/virtualenvs/tap-pepperjam/bin/activate
             uv pip install pytest coverage
             coverage run -m pytest tests/unittests
-            coverage html
       - run:
           name: 'Integration Tests'
           command: |
             source /usr/local/share/virtualenvs/tap-pepperjam/bin/activate
             uv pip install pytest coverage
-            coverage run -m pytest tests --ignore=tests/unittests
+            coverage run -a -m pytest tests --ignore=tests/unittests
             coverage html
 workflows:
   version: 2
