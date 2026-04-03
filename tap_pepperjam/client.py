@@ -82,7 +82,7 @@ def raise_for_error(response):
             error_code = response.get('meta', {}).get('status', {}).get('code')
             error_message = response.get('meta', {}).get('status', {}).get('message')
             if error_code and error_message:
-                message = '%s: %s' % error_code, error_message
+                message = '%s: %s' % (error_code, error_message)
                 ex = get_exception_for_error_code(error_code)
                 if error_code == 401 and 'Authentication error' in error_message:
                     LOGGER.error("Your API Key is invalid or has expired as per Pepperjam’s \
