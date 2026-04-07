@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.1.0
-  * Upgrade Python and dependency versions.
+  * Upgrade Python and dependency versions. [#15](https://github.com/singer-io/tap-pepperjam/pull/15)
   * Added unit tests.
   * Added mock integration tests.
 

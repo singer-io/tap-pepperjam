@@ -5,7 +5,7 @@ from tap_pepperjam.client import (
     PepperjamClient,
     PepperjamError,
     PepperjamInvalidParametersError,
-    PepperjamAuthenticationrror,
+    PepperjamAuthenticationError,
     PepperjamForbiddenError,
     PepperjamNotFoundError,
     PepperjamMethodNotAllowedError,
@@ -52,8 +52,8 @@ class TestGetExceptionForErrorCode(unittest.TestCase):
         self.assertIs(get_exception_for_error_code(400), PepperjamInvalidParametersError)
 
     def test_401_maps_to_authentication_error(self):
-        """401 maps to PepperjamAuthenticationrror."""
-        self.assertIs(get_exception_for_error_code(401), PepperjamAuthenticationrror)
+        """401 maps to PepperjamAuthenticationError."""
+        self.assertIs(get_exception_for_error_code(401), PepperjamAuthenticationError)
 
     def test_403_maps_to_forbidden_error(self):
         """403 maps to PepperjamForbiddenError."""
@@ -102,13 +102,13 @@ class TestRaiseForError(unittest.TestCase):
             raise_for_error(resp)
 
     def test_401_auth_error_raises_authentication_exception(self):
-        """raise_for_error raises PepperjamAuthenticationrror for 401 with auth message."""
+        """raise_for_error raises PepperjamAuthenticationError for 401 with auth message."""
         resp = _make_response(
             401,
             body=b"x",
             json_body={"meta": {"status": {"code": 401, "message": "Authentication error"}}},
         )
-        with self.assertRaises(PepperjamAuthenticationrror):
+        with self.assertRaises(PepperjamAuthenticationError):
             raise_for_error(resp)
 
     def test_no_meta_raises_generic_pepperjam_error(self):
@@ -188,7 +188,7 @@ class TestCheckApiKey(unittest.TestCase):
         client = _make_client(verified=False)
         mock_resp = _make_response(401, body=b"x", json_body={"meta": {"status": {"code": 401, "message": "Unauthorized"}}})
         client._PepperjamClient__session.get.return_value = mock_resp
-        with self.assertRaises(PepperjamAuthenticationrror):
+        with self.assertRaises(PepperjamAuthenticationError):
             client.check_api_key()
 
     def test_user_agent_header_sent(self):

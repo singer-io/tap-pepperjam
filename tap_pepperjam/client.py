@@ -25,7 +25,7 @@ class PepperjamInvalidParametersError(PepperjamError):
     pass
 
 
-class PepperjamAuthenticationrror(PepperjamError):
+class PepperjamAuthenticationError(PepperjamError):
     pass
 
 
@@ -47,7 +47,7 @@ class PepperjamLogicalConflictError(PepperjamError):
 
 ERROR_CODE_EXCEPTION_MAPPING = {
     400: PepperjamInvalidParametersError,
-    401: PepperjamAuthenticationrror,
+    401: PepperjamAuthenticationError,
     403: PepperjamForbiddenError,
     404: PepperjamNotFoundError,
     405: PepperjamMethodNotAllowedError,
@@ -194,6 +194,9 @@ class PepperjamClient(object):
 
         if response.status_code >= 500:
             raise Server5xxError()
+
+        if response.status_code == 429:
+            raise Server429Error()
 
         if response.status_code != 200:
             raise_for_error(response)
