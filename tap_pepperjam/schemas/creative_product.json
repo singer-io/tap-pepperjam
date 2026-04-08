@@ -60,8 +60,7 @@
       "type": ["null", "string"]
     },
     "expiration_date": {
-      "type": ["null", "string"],
-      "format": "date-time"
+      "type": ["null", "string"]
     },
     "features": {
       "type": ["null", "string"]
