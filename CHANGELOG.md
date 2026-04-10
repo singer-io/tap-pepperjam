@@ -1,9 +1,10 @@
 # Changelog
 
-## 1.1.0
+## 2.0.0
   * Upgrade Python and dependency versions. [#15](https://github.com/singer-io/tap-pepperjam/pull/15)
   * Added unit tests.
   * Added mock integration tests.
+  * Updated `creative_product` schema for date-time type field.
 
 ## 1.0.2
   * Bump dependency versions for twistlock compliance [#10](https://github.com/singer-io/tap-pepperjam/pull/10)
