@@ -1,5 +1,9 @@
 # Changelog
 
+
+## 2.1.0
+  * Added Parent stream for the child streams [#12](https://github.com/singer-io/tap-pepperjam/pull/12)
+
 ## 2.0.0
   * Upgrade Python and dependency versions. [#15](https://github.com/singer-io/tap-pepperjam/pull/15)
   * Added unit tests.
