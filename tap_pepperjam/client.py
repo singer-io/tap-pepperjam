@@ -25,7 +25,7 @@ class PepperjamInvalidParametersError(PepperjamError):
     pass
 
 
-class PepperjamAuthenticationrror(PepperjamError):
+class PepperjamAuthenticationError(PepperjamError):
     pass
 
 
@@ -47,7 +47,7 @@ class PepperjamLogicalConflictError(PepperjamError):
 
 ERROR_CODE_EXCEPTION_MAPPING = {
     400: PepperjamInvalidParametersError,
-    401: PepperjamAuthenticationrror,
+    401: PepperjamAuthenticationError,
     403: PepperjamForbiddenError,
     404: PepperjamNotFoundError,
     405: PepperjamMethodNotAllowedError,
@@ -82,7 +82,7 @@ def raise_for_error(response):
             error_code = response.get('meta', {}).get('status', {}).get('code')
             error_message = response.get('meta', {}).get('status', {}).get('message')
             if error_code and error_message:
-                message = '%s: %s' % error_code, error_message
+                message = '%s: %s' % (error_code, error_message)
                 ex = get_exception_for_error_code(error_code)
                 if error_code == 401 and 'Authentication error' in error_message:
                     LOGGER.error("Your API Key is invalid or has expired as per Pepperjam’s \
@@ -194,6 +194,9 @@ class PepperjamClient(object):
 
         if response.status_code >= 500:
             raise Server5xxError()
+
+        if response.status_code == 429:
+            raise Server429Error()
 
         if response.status_code != 200:
             raise_for_error(response)
