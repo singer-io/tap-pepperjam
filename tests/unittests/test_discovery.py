@@ -1,9 +1,11 @@
 import unittest
+from unittest.mock import MagicMock, patch
 from singer.catalog import Catalog, CatalogEntry
 
+from tap_pepperjam.client import PepperjamForbiddenError
 from tap_pepperjam.streams import flatten_streams, STREAMS
 from tap_pepperjam.schema import get_schemas
-from tap_pepperjam.discover import discover
+from tap_pepperjam.discover import discover, _apply_access_checks, _stream_is_accessible
 
 
 # ---------------------------------------------------------------------------
@@ -107,7 +109,7 @@ class TestGetSchemas(unittest.TestCase):
 
 class TestDiscover(unittest.TestCase):
     def setUp(self):
-        self.catalog = discover()
+        self.catalog = discover(MagicMock())
         self.flat = flatten_streams()
 
     def test_returns_catalog_instance(self):
@@ -149,6 +151,110 @@ class TestDiscover(unittest.TestCase):
         """discover() 'publisher_performance' has correct composite key_properties."""
         entry = next(e for e in self.catalog.streams if e.stream == "publisher_performance")
         self.assertEqual(entry.key_properties, ["publisher_id", "date"])
+
+
+class TestDiscoveryAccessChecks(unittest.TestCase):
+    @patch("tap_pepperjam.discover.LOGGER.warning")
+    def test_stream_is_accessible_logs_unauthorized_stream_message_on_403(self, mock_warning):
+        """_stream_is_accessible logs exact unauthorized-stream warning when API returns 403."""
+        client = MagicMock()
+        client.get.side_effect = PepperjamForbiddenError("403: Forbidden")
+
+        result = _stream_is_accessible(client, "group", {"parent_stream": None})
+
+        self.assertFalse(result)
+        mock_warning.assert_called_once_with(
+            "Unauthorized stream excluded from catalog: %s. HTTP error: %s",
+            "group",
+            client.get.side_effect,
+        )
+
+    @patch("tap_pepperjam.discover._stream_is_accessible", return_value=True)
+    def test_apply_access_checks_keeps_all_streams_when_accessible(self, _mock_access):
+        """No streams are removed when all stream probes are accessible."""
+        schemas, field_metadata = get_schemas()
+        original_names = set(schemas.keys())
+
+        _apply_access_checks(MagicMock(), schemas, field_metadata)
+
+        self.assertEqual(set(schemas.keys()), original_names)
+        self.assertEqual(set(field_metadata.keys()), original_names)
+
+    @patch("tap_pepperjam.discover._stream_is_accessible")
+    def test_apply_access_checks_removes_inaccessible_parent_and_children(self, mock_access):
+        """Inaccessible parent streams are removed and their children are pruned."""
+        def access_side_effect(_client, stream_name, stream_metadata):
+            if stream_name == "group":
+                return False
+            if stream_metadata.get("parent_stream"):
+                return True
+            return True
+
+        mock_access.side_effect = access_side_effect
+
+        schemas, field_metadata = get_schemas()
+        self.assertIn("group", schemas)
+        self.assertIn("group_member", schemas)
+
+        _apply_access_checks(MagicMock(), schemas, field_metadata)
+
+        self.assertNotIn("group", schemas)
+        self.assertNotIn("group_member", schemas)
+        self.assertNotIn("group", field_metadata)
+        self.assertNotIn("group_member", field_metadata)
+
+    @patch("tap_pepperjam.discover._stream_is_accessible", return_value=False)
+    def test_apply_access_checks_raises_when_no_streams_accessible(self, _mock_access):
+        """Discovery raises PepperjamForbiddenError when no streams are accessible."""
+        schemas, field_metadata = get_schemas()
+
+        with self.assertRaises(PepperjamForbiddenError):
+            _apply_access_checks(MagicMock(), schemas, field_metadata)
+
+    @patch("tap_pepperjam.discover._stream_is_accessible", return_value=False)
+    def test_apply_access_checks_raises_with_expected_message_when_no_streams_accessible(self, _mock_access):
+        """No-access failure includes the exact guidance message."""
+        schemas, field_metadata = get_schemas()
+
+        with self.assertRaises(PepperjamForbiddenError) as err:
+            _apply_access_checks(MagicMock(), schemas, field_metadata)
+
+        self.assertEqual(
+            str(err.exception),
+            "No streams are accessible. Ensure credentials have read permission for at least one stream.",
+        )
+
+    @patch("tap_pepperjam.discover.LOGGER.warning")
+    @patch("tap_pepperjam.discover._stream_is_accessible")
+    def test_apply_access_checks_logs_unauthorized_streams_excluded_message(self, mock_access, mock_warning):
+        """Partial access logs the combined unauthorized-streams exclusion message."""
+        def access_side_effect(_client, stream_name, stream_metadata):
+            if stream_metadata.get("parent_stream"):
+                return True
+            return stream_name != "group"
+
+        mock_access.side_effect = access_side_effect
+        schemas, field_metadata = get_schemas()
+
+        _apply_access_checks(MagicMock(), schemas, field_metadata)
+
+        mock_warning.assert_any_call(
+            "Unauthorized streams have been excluded: %s",
+            "group, group_member",
+        )
+
+    @patch("tap_pepperjam.discover._apply_access_checks")
+    def test_discover_calls_access_checks_when_client_provided(self, mock_apply):
+        """discover(client=...) applies access checks before catalog generation."""
+        client = MagicMock()
+        discover(client=client)
+        mock_apply.assert_called_once()
+
+    @patch("tap_pepperjam.discover._apply_access_checks")
+    def test_discover_skips_access_checks_without_client(self, mock_apply):
+        """discover() without a client preserves schema-only behavior for tests."""
+        discover(MagicMock())
+        mock_apply.assert_called_once()
 
 
 if __name__ == "__main__":
