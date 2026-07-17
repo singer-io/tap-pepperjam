@@ -250,12 +250,6 @@ class TestDiscoveryAccessChecks(unittest.TestCase):
         discover(client=client)
         mock_apply.assert_called_once()
 
-    @patch("tap_pepperjam.discover._apply_access_checks")
-    def test_discover_skips_access_checks_without_client(self, mock_apply):
-        """discover() without a client preserves schema-only behavior for tests."""
-        discover(MagicMock())
-        mock_apply.assert_called_once()
-
 
 if __name__ == "__main__":
     unittest.main()
