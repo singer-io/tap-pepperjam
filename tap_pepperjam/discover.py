@@ -1,5 +1,5 @@
 import copy
-from datetime import datetime
+from datetime import datetime, timezone
 
 import singer
 from singer.catalog import Catalog, CatalogEntry, Schema
@@ -26,12 +26,12 @@ def _stream_is_accessible(client, stream_name, stream_metadata):
     bookmark_query_field_from = endpoint_config.get('bookmark_query_field_from')
     bookmark_query_field_to = endpoint_config.get('bookmark_query_field_to')
     if bookmark_query_field_from and bookmark_query_field_to:
-        today = datetime.utcnow().strftime('%Y-%m-%d')
+        today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
         params[bookmark_query_field_from] = today
         params[bookmark_query_field_to] = today
 
     try:
-        # client.get(path=path, params=params, endpoint=stream_name)
+        client.get(path=path, params=params, endpoint=stream_name)
         return True
     except PepperjamForbiddenError as exc:
         LOGGER.warning(

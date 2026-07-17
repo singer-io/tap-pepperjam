@@ -102,12 +102,12 @@ class PepperjamClient(object):
         self.__api_key = api_key
         self.__user_agent = user_agent
         self.__session = requests.Session()
-        self.__verified = True
+        self.__verified = False
         self.base_url = 'https://api.pepperjamnetwork.com/{}/advertiser'.format(
             API_VERSION)
 
     def __enter__(self):
-        # self.__verified = self.check_api_key()
+        self.__verified = self.check_api_key()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
