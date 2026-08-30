@@ -1,9 +1,10 @@
 """Integration tests for tap-pepperjam stream discovery with mocked data.
 
-Calls the tap's own discover() function directly — no HTTP calls needed
-because discovery only reads local JSON schema files.
+Calls the tap's own discover() function with a mocked client so access checks
+run without making real HTTP requests.
 """
 import unittest
+from unittest.mock import MagicMock
 from singer import metadata
 
 try:
@@ -20,8 +21,8 @@ class PepperjamDiscoveryTest(PepperjamBaseTest, unittest.TestCase):
 
     def setUp(self):
         super().setUp()
-        # discover() reads only local JSON files — no HTTP, no credentials needed
-        self.catalog = discover()
+        # Pass a mocked client so discovery can run stream access checks safely.
+        self.catalog = discover(MagicMock())
         self.discovered_streams = {e.stream: e for e in self.catalog.streams}
 
     # ── Completeness ─────────────────────────────────────────────────────────

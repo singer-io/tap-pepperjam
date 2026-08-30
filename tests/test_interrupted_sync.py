@@ -8,7 +8,7 @@ Verifies that:
 - FULL_TABLE streams are always fully replicated on resume (no bookmark to respect)
 """
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 try:
     from base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
@@ -92,7 +92,7 @@ class TestInterruptedSyncResumption(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_resume_does_not_replay_already_synced_records(self, mock_wr):
         """Records with modified < interrupt bookmark are NOT replayed on resume."""
-        catalog = _select_stream(discover(), "creative_advanced")
+        catalog = _select_stream(discover(MagicMock()), "creative_advanced")
         time_extracted = utils.now()
         # Simulate records fetched on resume — all are before the interrupt point
         r1 = self._generate_stream_record("creative_advanced", date_value="2021-01-01T00:00:00Z")
@@ -114,7 +114,7 @@ class TestInterruptedSyncResumption(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_resume_emits_only_new_records(self, mock_wr):
         """Only records with modified >= interrupt bookmark are emitted on resume."""
-        catalog = _select_stream(discover(), "creative_advanced")
+        catalog = _select_stream(discover(MagicMock()), "creative_advanced")
         time_extracted = utils.now()
         r_old = self._generate_stream_record("creative_advanced", date_value="2021-05-01T00:00:00Z")
         r_old["id"] = 10  # before → excluded
@@ -140,7 +140,7 @@ class TestInterruptedSyncResumption(PepperjamBaseTest, unittest.TestCase):
            return_value=("2021-12-01T00:00:00Z", 2))
     def test_resumed_sync_endpoint_advances_bookmark_past_interrupt(self, _mock_pr, _mock_ws):
         """After a successful resume, the bookmark advances past the interrupt point."""
-        catalog = _select_stream(discover(), "creative_banner")
+        catalog = _select_stream(discover(MagicMock()), "creative_banner")
         state = self._interrupted_state("creative_banner", "modified")
         client = make_mock_client([
             make_api_response([{"id": "new_1"}, {"id": "new_2"}])
@@ -179,7 +179,7 @@ class TestFullTableStreamOnResume(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_full_table_stream_emits_all_records_with_stale_state(self, mock_wr):
         """FULL_TABLE stream emits all records even when state has leftover entries."""
-        catalog = _select_stream(discover(), "publisher")
+        catalog = _select_stream(discover(MagicMock()), "publisher")
         time_extracted = utils.now()
         records = [dict(self._generate_stream_record("publisher"), id=i) for i in range(1, 5)]
 
@@ -200,7 +200,7 @@ class TestFullTableStreamOnResume(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_full_table_group_emits_all_records(self, mock_wr):
         """'group' FULL_TABLE stream emits all records even with a very recent state."""
-        catalog = _select_stream(discover(), "group")
+        catalog = _select_stream(discover(MagicMock()), "group")
         time_extracted = utils.now()
         records = [dict(self._generate_stream_record("group"), id=i) for i in range(1, 3)]
 

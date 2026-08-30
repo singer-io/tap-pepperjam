@@ -5,7 +5,7 @@ contains a 'next' pagination link, and stops correctly when no next page exists.
 """
 import copy
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 try:
     from base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
@@ -49,7 +49,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             next_href=self.PAGE2_URL,
         )
         page2 = make_api_response([{"id": str(i)} for i in range(10, 20)])
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([page1, page2])
 
         sync_endpoint(
@@ -79,7 +79,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             next_href=self.PAGE3_URL,
         )
         page3 = make_api_response([{"id": str(i)} for i in range(10, 15)])
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([page1, page2, page3])
 
         sync_endpoint(
@@ -101,7 +101,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
     def test_single_page_stops_after_one_request(self, mock_pr):
         """sync_endpoint makes exactly one client.get call when no 'next' link is present."""
         page1 = make_api_response([{"id": str(i)} for i in range(3)])
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([page1])
 
         sync_endpoint(
@@ -122,7 +122,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.process_records", return_value=(None, 0))
     def test_empty_response_stops_immediately(self, mock_pr):
         """sync_endpoint breaks out immediately when client.get returns an empty response."""
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([{}])  # empty dict = no data
 
         total = sync_endpoint(
@@ -149,7 +149,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             next_href=self.PAGE2_URL,
         )
         page2 = make_api_response([{"id": "2"}])
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([page1, page2])
 
         sync_endpoint(
@@ -172,7 +172,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
     def test_first_page_passes_query_params(self, mock_pr):
         """sync_endpoint passes query params to client.get on the first page request."""
         page1 = make_api_response([{"id": str(i)} for i in range(10)])
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([page1])
 
         sync_endpoint(
@@ -200,7 +200,7 @@ class TestPepperjamPagination(PepperjamBaseTest, unittest.TestCase):
             next_href=self.PAGE2_URL,
         )
         page2 = make_api_response([{"id": str(i)} for i in range(5, 10)])
-        catalog = _select_stream(discover(), self.STREAM_NAME)
+        catalog = _select_stream(discover(MagicMock()), self.STREAM_NAME)
         client = make_mock_client([page1, page2])
 
         sync_endpoint(

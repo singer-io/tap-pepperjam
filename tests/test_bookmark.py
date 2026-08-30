@@ -6,7 +6,7 @@ Tests:
 - sync_endpoint writes bookmark to state after completing a date window
 """
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 try:
     from base import PepperjamBaseTest, make_api_response, make_mock_client, _select_stream
@@ -98,7 +98,7 @@ class TestProcessRecordsBookmarkFiltering(PepperjamBaseTest, unittest.TestCase):
     """Verify process_records honours the last_datetime bookmark for filtering."""
 
     def _make_catalog_for(self, stream_name):
-        return _select_stream(discover(), stream_name)
+        return _select_stream(discover(MagicMock()), stream_name)
 
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_records_before_bookmark_are_not_written(self, mock_wr):
@@ -197,7 +197,7 @@ class TestSyncEndpointWritesBookmark(PepperjamBaseTest, unittest.TestCase):
            return_value=("2021-06-01T00:00:00Z", 2))
     def test_write_bookmark_called_for_incremental_stream(self, _mock_pr, mock_wb):
         """sync_endpoint calls write_bookmark for a stream that has a bookmark_field."""
-        catalog = _select_stream(discover(), "creative_advanced")
+        catalog = _select_stream(discover(MagicMock()), "creative_advanced")
         records = [{"id": "1"}, {"id": "2"}]
         client = make_mock_client([make_api_response(records)])
 
@@ -226,7 +226,7 @@ class TestSyncEndpointWritesBookmark(PepperjamBaseTest, unittest.TestCase):
            return_value=(None, 2))
     def test_write_bookmark_not_called_for_full_table_stream(self, _mock_pr, mock_wb):
         """sync_endpoint does NOT call write_bookmark when bookmark_field is None."""
-        catalog = _select_stream(discover(), "publisher")
+        catalog = _select_stream(discover(MagicMock()), "publisher")
         records = [{"id": "1"}, {"id": "2"}]
         client = make_mock_client([make_api_response(records)])
 
@@ -255,7 +255,7 @@ class TestSyncEndpointWritesBookmark(PepperjamBaseTest, unittest.TestCase):
            return_value=("2021-09-01T00:00:00Z", 1))
     def test_state_contains_bookmark_after_sync(self, _mock_pr, _mock_ws):
         """State dict contains the bookmark value for the stream after sync_endpoint."""
-        catalog = _select_stream(discover(), "creative_banner")
+        catalog = _select_stream(discover(MagicMock()), "creative_banner")
         state = {}
         records = [{"id": "1"}]
         client = make_mock_client([make_api_response(records)])
@@ -286,7 +286,7 @@ class TestSyncEndpointWritesBookmark(PepperjamBaseTest, unittest.TestCase):
            return_value=("2022-01-15T00:00:00Z", 5))
     def test_bookmark_value_advances_after_newer_records(self, _mock_pr, _mock_ws):
         """State bookmark advances to the max_bookmark_value returned by process_records."""
-        catalog = _select_stream(discover(), "creative_text")
+        catalog = _select_stream(discover(MagicMock()), "creative_text")
         state = {"bookmarks": {"creative_text": "2021-01-01T00:00:00Z"}}
         records = [{"id": str(i)} for i in range(5)]
         client = make_mock_client([make_api_response(records)])

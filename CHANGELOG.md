@@ -1,6 +1,10 @@
 # Changelog
 
 
+## 2.1.1
+  * Streams that the credentials cannot access (403) are now excluded from the catalog during discovery instead of raising an error. [#17](https://github.com/singer-io/tap-pepperjam/pull/17)
+
+
 ## 2.1.0
   * Added Parent stream for the child streams [#12](https://github.com/singer-io/tap-pepperjam/pull/12)
 

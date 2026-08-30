@@ -6,7 +6,7 @@ Verifies that:
 - No schema fields are silently dropped during transformation
 """
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 try:
     from base import PepperjamBaseTest, _select_stream
@@ -54,7 +54,7 @@ class TestPepperjamAllFields(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_all_schema_fields_replicated_for_publisher(self, mock_wr):
         """process_records emits records containing all publisher schema fields."""
-        catalog = _select_stream(discover(), "publisher")
+        catalog = _select_stream(discover(MagicMock()), "publisher")
         schema_fields = self._schema_fields("publisher")
         record = self._generate_stream_record("publisher")
         time_extracted = utils.now()
@@ -82,7 +82,7 @@ class TestPepperjamAllFields(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_all_schema_fields_replicated_for_term(self, mock_wr):
         """process_records emits records containing all term schema fields."""
-        catalog = _select_stream(discover(), "term")
+        catalog = _select_stream(discover(MagicMock()), "term")
         record = self._generate_stream_record("term")
         time_extracted = utils.now()
 
@@ -101,7 +101,7 @@ class TestPepperjamAllFields(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_incremental_record_emitted_with_all_fields(self, mock_wr):
         """process_records emits an incremental record (creative_advanced) with all schema fields."""
-        catalog = _select_stream(discover(), "creative_advanced")
+        catalog = _select_stream(discover(MagicMock()), "creative_advanced")
         record = self._generate_stream_record("creative_advanced",
                                               date_value="2021-03-10T00:00:00Z")
         time_extracted = utils.now()

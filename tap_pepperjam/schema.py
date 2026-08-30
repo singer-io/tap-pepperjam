@@ -31,6 +31,15 @@ def get_schemas():
             valid_replication_keys=stream_metadata.get('replication_keys', None),
             replication_method=stream_metadata.get('replication_method', None)
         )
+        mdata_map = metadata.to_map(mdata)
+        for replication_key in stream_metadata.get('replication_keys') or []:
+            mdata_map = metadata.write(
+                mdata_map,
+                ('properties', replication_key),
+                'inclusion',
+                'automatic'
+            )
+        mdata = metadata.to_list(mdata_map)
         parent_stream = stream_metadata.get('parent_stream')
         if parent_stream:
             mdata[0]['metadata'].update({"parent-tap-stream-id": parent_stream})

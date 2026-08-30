@@ -314,6 +314,7 @@ def sync_endpoint(
                         # For each parent record
                         for record in transformed_data:
                             i = 0
+                            parent_id_field = id_fields[0] if id_fields else None
                             # Set parent_id
                             for id_field in id_fields:
                                 if i == 0:
@@ -409,8 +410,7 @@ def update_currently_syncing(state, stream_name):
 
 
 def sync(client, config, catalog, state):
-    if 'start_date' in config:
-        start_date = config['start_date']
+    start_date = config.get('start_date')
 
     # Get selected_streams from catalog, based on state last_stream
     #   last_stream = Previous currently synced stream, if the load was interrupted

@@ -4,7 +4,7 @@ Verifies that primary keys and replication keys (automatic fields) are always
 present in emitted records, regardless of selection state.
 """
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 try:
     from base import PepperjamBaseTest, _select_stream
@@ -35,7 +35,7 @@ class TestPepperjamAutomaticFields(PepperjamBaseTest, unittest.TestCase):
         """Every primary key field has inclusion='automatic' in stream metadata."""
         for stream_name, meta in self.expected_metadata().items():
             with self.subTest(stream=stream_name):
-                catalog = discover()
+                catalog = discover(MagicMock())
                 entry = next(e for e in catalog.streams if e.stream == stream_name)
                 mdata = singer_metadata.to_map(entry.metadata)
                 for pk in meta[self.PRIMARY_KEYS]:
@@ -51,7 +51,7 @@ class TestPepperjamAutomaticFields(PepperjamBaseTest, unittest.TestCase):
         for stream_name, meta in self.expected_metadata().items():
             for rep_key in meta[self.REPLICATION_KEYS]:
                 with self.subTest(stream=stream_name, field=rep_key):
-                    catalog = discover()
+                    catalog = discover(MagicMock())
                     entry = next(e for e in catalog.streams if e.stream == stream_name)
                     mdata = singer_metadata.to_map(entry.metadata)
                     # Singer field-level metadata key is tuple ("properties", field_name)
@@ -66,7 +66,7 @@ class TestPepperjamAutomaticFields(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_publisher_primary_key_always_in_emitted_record(self, mock_wr):
         """Primary key 'id' is always present in emitted publisher records."""
-        catalog = _select_stream(discover(), "publisher")
+        catalog = _select_stream(discover(MagicMock()), "publisher")
         record = self._generate_stream_record("publisher")
         time_extracted = utils.now()
 
@@ -87,7 +87,7 @@ class TestPepperjamAutomaticFields(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_creative_advanced_primary_key_in_emitted_record(self, mock_wr):
         """Primary key 'id' is always present in emitted creative_advanced records."""
-        catalog = _select_stream(discover(), "creative_advanced")
+        catalog = _select_stream(discover(MagicMock()), "creative_advanced")
         record = self._generate_stream_record("creative_advanced",
                                               date_value="2024-06-01T00:00:00Z")
         time_extracted = utils.now()
@@ -109,7 +109,7 @@ class TestPepperjamAutomaticFields(PepperjamBaseTest, unittest.TestCase):
     @patch("tap_pepperjam.sync.singer.messages.write_record")
     def test_transaction_history_all_primary_keys_in_emitted_record(self, mock_wr):
         """All three primary keys are present in emitted transaction_history records."""
-        catalog = _select_stream(discover(), "transaction_history")
+        catalog = _select_stream(discover(MagicMock()), "transaction_history")
         record = self._generate_stream_record("transaction_history",
                                               date_value="2024-06-01T00:00:00Z")
         time_extracted = utils.now()
