@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import singer
 from singer.catalog import Catalog, CatalogEntry, Schema
-from tap_pepperjam.client import PepperjamForbiddenError
+from tap_pepperjam.client import PepperjamAuthenticationError, PepperjamForbiddenError
 from tap_pepperjam.schema import get_schemas
 from tap_pepperjam.streams import flatten_streams, STREAMS
 
@@ -33,7 +33,7 @@ def _stream_is_accessible(client, stream_name, stream_metadata):
     try:
         client.get(path=path, params=params, endpoint=stream_name)
         return True
-    except PepperjamForbiddenError as exc:
+    except (PepperjamForbiddenError, PepperjamAuthenticationError) as exc:
         LOGGER.warning(
             "Unauthorized stream excluded from catalog: %s. HTTP error: %s",
             stream_name,
